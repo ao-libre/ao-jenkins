@@ -13,6 +13,29 @@ Configuration necessary to use jenkins with Argentum Online Libre Server
 
 ![imagen](https://github.com/ao-libre/ao-jenkins/blob/master/jenkins-config.png)
 
+System Management:
+![imagen](https://github.com/ao-libre/ao-jenkins/blob/master/jenkins vb6.png)
+
+Path VBP
+```
+C:\Program Files (x86)\Jenkins\workspace\ao-server-master\SERVER.VBP
+```
+
+Windows Batch
+```
+echo "Borramos archivos innecesarios"
+rmdir /s /q "C:\Program Files (x86)\Jenkins\workspace\ao-server-master\.git" 
+rmdir /s /q "C:\Program Files (x86)\Jenkins\workspace\ao-server-master\.github"
+rmdir /s /q "C:\Program Files (x86)\Jenkins\workspace\ao-server-master\Codigo"
+del /f  "C:\Program Files (x86)\Jenkins\workspace\ao-server-master\.gitignore"
+del /f  "C:\Program Files (x86)\Jenkins\workspace\ao-server-master\.gitattributes"
+del /f  "C:\Program Files (x86)\Jenkins\workspace\ao-server-master\SERVER.VBP"
+
+echo "Poniendo contenido en la carpeta del server de produccion"
+mkdir "C:\ao-server-master" 
+xcopy /Y /E "C:\Program Files (x86)\Jenkins\workspace\ao-server-master" "C:\ao-server-master"
+```
+
 ## Links de interes:
 - http://zbz5.net/automating-build-visual-basic-6-project
 - https://github.com/jenkinsci/visual-basic-6-plugin
