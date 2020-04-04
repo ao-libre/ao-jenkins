@@ -9,7 +9,9 @@ Configuration necessary to use jenkins with Argentum Online Libre Server
 
 4- Instalar Visual Basic 6 Plugin para Jenkins (https://github.com/jenkinsci/visual-basic-6-plugin)
 
-5- Configurar Jenkins como se muestra en la siguiente imagen
+5- Instalar Visual Basic 6 Plugin para Jenkins (https://github.com/jenkinsci/visual-basic-6-plugin)
+
+6- Configurar Jenkins como se muestra en la siguiente imagen
 
 ![imagen](https://github.com/ao-libre/ao-jenkins/blob/master/jenkins-config.png)
 
