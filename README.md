@@ -24,7 +24,10 @@ Path VBP
 ```
 C:\Program Files (x86)\Jenkins\workspace\ao-server-master\SERVER.VBP
 ```
-- MASTER (SERVER TEST)
+
+
+
+# MASTER (SERVER TEST)
 
 Windows Batch
 ```
@@ -41,8 +44,9 @@ mkdir "C:\ao-server-master"
 xcopy /Y /E "C:\Program Files (x86)\Jenkins\workspace\ao-server-master" "C:\ao-server-master"
 ```
 
-- Server Principal, Produccion
-windows batch
+# Server Principal, Produccion
+
+Windows batch
 ```
 echo "Hacemos esto para no perder la carpeta .git y despues que la shell pueda hacer el release a github"
 mkdir "C:\ao-server-release-without-rubbish-files-temp"
@@ -64,6 +68,7 @@ xcopy /Y /E "C:\ao-server-release-without-rubbish-files-temp" "C:\ao-server-rele
 echo "Creamos .zip para poder subirlo a github como asset de release"
 powershell Compress-Archive -Path "C:\ao-server-release-without-rubbish-files-temp" artifact.zip
 ```
+
 SHELL
 ```
 # Build
@@ -93,6 +98,12 @@ id=$(echo "$release" | sed -n -e 's/"id":\ \([0-9]\+\),/\1/p' | head -n 1 | sed 
 
 # Upload the artifact
 curl -XPOST -H "Authorization:token $token" -H "Content-Type:application/octet-stream" --data-binary @artifact.zip https://uploads.github.com/repos/ao-libre/ao-server/releases/$id/assets?name=$tag.zip
+```
+
+WINDOWS BATCH
+```
+echo "Borramos carpeta temporal"
+rmdir /s /q "C:\ao-server-release-without-rubbish-files-temp"
 ```
 
 ## Links de interes:
