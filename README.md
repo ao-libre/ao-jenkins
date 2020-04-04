@@ -75,7 +75,7 @@ SHELL
 
 # Publish on github
 echo "<<< Publishing on AO-LIBRE Server Release  >>>"
-token="a8ccd0abd79e8c3897491b0bf51ccf12b3575f41"
+token="TOKEN"
 
 # Get the last tag name
 tag=$(git describe --tags)
@@ -104,6 +104,64 @@ WINDOWS BATCH
 ```
 echo "Borramos carpeta temporal"
 rmdir /s /q "C:\ao-server-release-without-rubbish-files-temp"
+```
+
+# Cliente Release
+
+WINDOWS BATCH
+```
+echo "Hacemos esto para no perder la carpeta .git y despues que la shell pueda hacer el release a github"
+mkdir "C:\ao-cliente-release-without-rubbish-files-temp"
+
+xcopy /Y /E "C:\Program Files (x86)\Jenkins\workspace\ao-cliente-release" "C:\ao-cliente-release-without-rubbish-files-temp"
+
+echo "Borramos archivos innecesarios"
+rmdir /s /q "C:\ao-cliente-release-without-rubbish-files-temp\.git" 
+rmdir /s /q "C:\ao-cliente-release-without-rubbish-files-temp\.github"
+rmdir /s /q "C:\ao-cliente-release-without-rubbish-files-temp\CODIGO"
+del /f  "C:\ao-cliente-release-without-rubbish-files-temp\.gitignore"
+del /f  "C:\ao-cliente-release-without-rubbish-files-temp\.gitattributes"
+del /f  "C:\ao-cliente-release-without-rubbish-files-temp\Client.vbp"
+
+echo "Creamos .zip para poder subirlo a github como asset de release"
+powershell Compress-Archive -Path "C:\ao-cliente-release-without-rubbish-files-temp" artifact.zip
+```
+
+SHELL
+```
+# Build
+
+# Publish on github
+echo "<<< Publishing on AO-LIBRE Cliente Release  >>>"
+token="TOKEN"
+
+# Get the last tag name
+tag=$(git describe --tags)
+
+# Get the full message associated with this tag
+#message="$(!git pull; git log --pretty=format:'%h - %an, %ad : %s' $(git tag -l | grep v | sort | tail -n 1)...origin/master)"
+message="Testing v0.13.29"
+
+
+# Get the title and the description as separated variables
+name=$tag
+description=$(echo "$message")
+description=$(echo "$description" | sed -z 's/\n/\\n/g') # Escape line breaks to prevent json parsing problems
+
+# Create a release
+release=$(curl -XPOST -H "Authorization:token $token" --data "{\"tag_name\": \"$tag\", \"target_commitish\": \"master\", \"name\": \"$name\", \"body\": \"$description\", \"draft\": false, \"prerelease\": false}" https://api.github.com/repos/ao-libre/ao-cliente/releases)
+
+# Extract the id of the release from the creation response
+id=$(echo "$release" | sed -n -e 's/"id":\ \([0-9]\+\),/\1/p' | head -n 1 | sed 's/[[:blank:]]//g')
+
+# Upload the artifact
+curl -XPOST -H "Authorization:token $token" -H "Content-Type:application/octet-stream" --data-binary @artifact.zip https://uploads.github.com/repos/ao-libre/ao-cliente/releases/$id/assets?name=$tag.zip
+```
+
+WINDOWS BATCH
+```
+echo "Borramos carpeta temporal"
+rmdir /s /q "C:\ao-cliente-release-without-rubbish-files-temp"
 ```
 
 ## Links de interes:
