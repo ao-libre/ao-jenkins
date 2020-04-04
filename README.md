@@ -9,7 +9,7 @@ Configuration necessary to use jenkins with Argentum Online Libre Server
 
 4- Instalar Visual Basic 6 Plugin para Jenkins (https://github.com/jenkinsci/visual-basic-6-plugin)
 
-5- Instalar Visual Basic 6 Plugin para Jenkins (https://github.com/jenkinsci/visual-basic-6-plugin)
+5- Instalar Discord Notifier (https://plugins.jenkins.io/discord-notifier/)
 
 6- Configurar Jenkins como se muestra en la siguiente imagen
 
