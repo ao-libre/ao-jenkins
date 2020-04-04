@@ -15,8 +15,10 @@ Configuration necessary to use jenkins with Argentum Online Libre Server
 
 ![imagen](https://github.com/ao-libre/ao-jenkins/blob/master/jenkins-config.png)
 
+
 System Management:
-![imagen](https://github.com/ao-libre/ao-jenkins/blob/master/jenkins vb6.png)
+
+![imagen](https://raw.githubusercontent.com/ao-libre/ao-jenkins/master/jenkins%20vb6.png)
 
 Path VBP
 ```
