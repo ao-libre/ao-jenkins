@@ -24,6 +24,7 @@ Path VBP
 ```
 C:\Program Files (x86)\Jenkins\workspace\ao-server-master\SERVER.VBP
 ```
+- MASTER (SERVER TEST)
 
 Windows Batch
 ```
@@ -38,6 +39,60 @@ del /f  "C:\Program Files (x86)\Jenkins\workspace\ao-server-master\SERVER.VBP"
 echo "Poniendo contenido en la carpeta del server de produccion"
 mkdir "C:\ao-server-master" 
 xcopy /Y /E "C:\Program Files (x86)\Jenkins\workspace\ao-server-master" "C:\ao-server-master"
+```
+
+- Server Principal, Produccion
+windows batch
+```
+echo "Hacemos esto para no perder la carpeta .git y despues que la shell pueda hacer el release a github"
+mkdir "C:\ao-server-release-without-rubbish-files-temp"
+
+xcopy /Y /E "C:\Program Files (x86)\Jenkins\workspace\ao-server-release" "C:\ao-server-release-without-rubbish-files-temp"
+
+echo "Borramos archivos innecesarios"
+rmdir /s /q "C:\ao-server-release-without-rubbish-files-temp\.git" 
+rmdir /s /q "C:\ao-server-release-without-rubbish-files-temp\.github"
+rmdir /s /q "C:\ao-server-release-without-rubbish-files-temp\Codigo"
+del /f  "C:\ao-server-release-without-rubbish-files-temp\.gitignore"
+del /f  "C:\ao-server-release-without-rubbish-files-temp\.gitattributes"
+del /f  "C:\ao-server-release-without-rubbish-files-temp\SERVER.VBP"
+
+echo "Poniendo contenido en la carpeta del server de produccion"
+mkdir "C:\ao-server-release" 
+xcopy /Y /E "C:\ao-server-release-without-rubbish-files-temp" "C:\ao-server-release"
+
+echo "Creamos .zip para poder subirlo a github como asset de release"
+powershell Compress-Archive -Path "C:\ao-server-release-without-rubbish-files-temp" artifact.zip
+```
+SHELL
+```
+# Build
+
+# Publish on github
+echo "<<< Publishing on AO-LIBRE Server Release  >>>"
+token="a8ccd0abd79e8c3897491b0bf51ccf12b3575f41"
+
+# Get the last tag name
+tag=$(git describe --tags)
+
+# Get the full message associated with this tag
+#message="$(!git pull; git log --pretty=format:'%h - %an, %ad : %s' $(git tag -l | grep v | sort | tail -n 1)...origin/master)"
+message="Testing v0.13.29"
+
+
+# Get the title and the description as separated variables
+name=$tag
+description=$(echo "$message")
+description=$(echo "$description" | sed -z 's/\n/\\n/g') # Escape line breaks to prevent json parsing problems
+
+# Create a release
+release=$(curl -XPOST -H "Authorization:token $token" --data "{\"tag_name\": \"$tag\", \"target_commitish\": \"master\", \"name\": \"$name\", \"body\": \"$description\", \"draft\": false, \"prerelease\": false}" https://api.github.com/repos/ao-libre/ao-server/releases)
+
+# Extract the id of the release from the creation response
+id=$(echo "$release" | sed -n -e 's/"id":\ \([0-9]\+\),/\1/p' | head -n 1 | sed 's/[[:blank:]]//g')
+
+# Upload the artifact
+curl -XPOST -H "Authorization:token $token" -H "Content-Type:application/octet-stream" --data-binary @artifact.zip https://uploads.github.com/repos/ao-libre/ao-server/releases/$id/assets?name=$tag.zip
 ```
 
 ## Links de interes:
